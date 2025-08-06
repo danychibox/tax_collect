@@ -17,40 +17,62 @@ class PaymentConfirmationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('Paiement confirmé'),
+        title: const Text('Paiement Confirmé'),
+        backgroundColor: const Color(0xFF0D47A1),
+        elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 30),
             const Icon(
-              Icons.check_circle,
+              Icons.check_circle_rounded,
               color: Colors.green,
               size: 100,
             ),
             const SizedBox(height: 20),
             const Text(
-              'Paiement réussi!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Paiement Réussi !',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            _buildConfirmationDetail('Numéro de reçu', receiptNumber),
-            _buildConfirmationDetail('Taxe payée', tax.name),
-            _buildConfirmationDetail('Montant', '${tax.amount} FCFA'),
-            _buildConfirmationDetail(
-              'Date',
+
+            // Détails de confirmation
+            _buildConfirmationCard('🧾 Numéro de reçu', receiptNumber),
+            _buildConfirmationCard('💼 Taxe payée', tax.name),
+            _buildConfirmationCard('💰 Montant', '${tax.amount} FCFA'),
+            _buildConfirmationCard(
+              '📅 Date',
               DateFormat('dd/MM/yyyy à HH:mm').format(paymentDate),
             ),
+
             const Spacer(),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.popUntil(context, (route) => route.isFirst);
                 },
-                child: const Text('Retour à l\'accueil'),
+                icon: const Icon(Icons.home),
+                label: const Text(
+                  'Retour à l\'accueil',
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D47A1),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
           ],
@@ -59,17 +81,37 @@ class PaymentConfirmationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildConfirmationDetail(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+  Widget _buildConfirmationCard(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          )
+        ],
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          Flexible(
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-          Text(value),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(color: Colors.black87),
+            ),
+          ),
         ],
       ),
     );

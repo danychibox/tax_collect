@@ -10,18 +10,37 @@ class PaymentHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        title: const Text('Détails du paiement'),
+        title: const Text('Détails du Paiement'),
+        backgroundColor: const Color(0xFF0D47A1),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: ReceiptWidget(payment: payment),
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ReceiptWidget(payment: payment),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Générer et partager le PDF
+          // TODO: Générer et partager le reçu en PDF
         },
-        child: const Icon(Icons.share),
+        icon: const Icon(Icons.share),
+        label: const Text('Partager'),
+        backgroundColor: const Color(0xFF0D47A1),
       ),
     );
   }

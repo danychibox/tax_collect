@@ -40,7 +40,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Montant à payer: ${widget.tax.amount} FCFA',
+                'Montant à payer: ${widget.tax.amount} FC',
                 style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 20),

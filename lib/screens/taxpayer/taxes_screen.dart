@@ -12,6 +12,8 @@ class TaxesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(tax.name),
+        backgroundColor: const Color(0xFF0D47A1),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,7 +29,7 @@ class TaxesScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            _buildDetailRow('Montant', '${tax.amount} FCFA'),
+            _buildDetailRow('Montant', '${tax.amount} FC'),
             _buildDetailRow('Description', tax.description ?? 'Aucune description'),
             if (tax.dueDate != null)
               _buildDetailRow(

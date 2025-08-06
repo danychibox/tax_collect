@@ -36,7 +36,7 @@ dependencies:
   uuid: ^3.0.7
   # flutter_localizations: ^0.3.3
   provider: ^6.0.5
-  syncfusion_flutter_charts: ^22.1.40
+  syncfusion_flutter_charts: ^22.1.39
   pdf: ^3.10.1
   printing: ^5.9.1
 

@@ -30,69 +30,82 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tableau de Bord'),
+        backgroundColor: const Color(0xFF0D47A1),
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: const Color(0xFFF5F6FA),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Mes Taxes',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: taxProvider.taxes.length,
-                itemBuilder: (context, index) {
-                  final tax = taxProvider.taxes[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text(tax.name),
-                      subtitle: Text('${tax.amount} FCFA'),
-                      trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => TaxesScreen(tax: tax),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+              '📊 Mes Taxes',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0D47A1),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
+            ...taxProvider.taxes.map((tax) => Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.account_balance_wallet, color: Colors.blueAccent),
+                    title: Text(
+                      tax.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('${tax.amount} FCFA'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => TaxesScreen(tax: tax)),
+                      );
+                    },
+                  ),
+                )),
+
+            const SizedBox(height: 30),
+
             const Text(
-              'Historique des Paiements',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: paymentProvider.payments.length,
-                itemBuilder: (context, index) {
-                  final payment = paymentProvider.payments[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text('Paiement #${payment.receiptNumber}'),
-                      subtitle: Text('${payment.amount} FCFA'),
-                      trailing: const Icon(Icons.receipt),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => PaymentHistoryScreen(payment: payment),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+              '🧾 Historique des Paiements',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0D47A1),
               ),
             ),
+            const SizedBox(height: 10),
+            ...paymentProvider.payments.map((payment) => Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.receipt_long, color: Colors.green),
+                    title: Text(
+                      'Paiement #${payment.receiptNumber}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('${payment.amount} FC'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PaymentHistoryScreen(payment: payment),
+                        ),
+                      );
+                    },
+                  ),
+                )),
           ],
         ),
       ),
