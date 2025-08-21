@@ -2,129 +2,140 @@ import 'package:flutter/material.dart';
 import 'package:tax_collect/screens/admin/admin_dashboard.dart';
 import 'package:tax_collect/screens/taxpayer/dashboard_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0D47A1), Color(0xFF42A5F5)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              elevation: 12,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
+      backgroundColor: Colors.white,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double width = constraints.maxWidth;
+          double height = constraints.maxHeight;
+
+          // Déterminer si l'écran est large (tablette / PC)
+          bool isLargeScreen = width > 600;
+
+          // Ajustement des tailles en fonction de l'écran
+          double padding = isLargeScreen ? width * 0.2 : 40;
+          double titleSize = isLargeScreen ? 32 : 24;
+          double subtitleSize = isLargeScreen ? 18 : 14;
+          double inputHeight = isLargeScreen ? 60 : 50;
+          double buttonWidth = isLargeScreen ? width * 0.4 : width * 0.6;
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Bandeau haut
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: height * 0.05),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF151931),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
+                  ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'TaxCollect',
+                      Text(
+                        "TAXE COLLECTE",
                         style: TextStyle(
-                          fontSize: 32,
+                          color: Colors.white,
+                          fontSize: titleSize,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0D47A1),
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      TextFormField(
-                        controller: _usernameController,
-                        decoration: InputDecoration(
-                          labelText: 'Nom d\'utilisateur',
-                          prefixIcon: const Icon(Icons.person),
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre nom d\'utilisateur';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: 'Mot de passe',
-                          prefixIcon: const Icon(Icons.lock),
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer votre mot de passe';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: const Color(0xFF0D47A1),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Connexion',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "VILLE DE BENI",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: subtitleSize,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
+
+                SizedBox(height: height * 0.1),
+
+                // Champ utilisateur
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: SizedBox(
+                    height: inputHeight,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey.shade400,
+                        hintText: "utilisateur",
+                        hintStyle: const TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Champ mot de passe
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: SizedBox(
+                    height: inputHeight,
+                    child: TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey.shade400,
+                        hintText: "mot de passe",
+                        hintStyle: const TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                // Bouton connexion
+                SizedBox(
+                  width: buttonWidth,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0D1B52),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      "CONNEXION",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: height * 0.05),
+              ],
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
-  }
-
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const AdminDashboard()),
-      );
-    }
   }
 }
