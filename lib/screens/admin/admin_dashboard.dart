@@ -1,103 +1,185 @@
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:tax_collect/providers/tax_provider.dart';
-// import 'package:tax_collect/providers/payment_provider.dart';
-import 'package:tax_collect/screens/admin/tax_management_screen.dart';
-import 'package:tax_collect/screens/admin/taxpayer_management_screen.dart';
-import 'package:tax_collect/screens/admin/reports_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:tax_collect/providers/tax_provider.dart';
+import 'package:tax_collect/providers/payment_provider.dart';
+import 'package:tax_collect/providers/taxpayer_provider.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final taxpayerCount = context.watch<TaxpayerProvider>().taxpayers.length;
+    final taxCount = context.watch<TaxProvider>().taxes.length;
+    final payments = context.watch<PaymentProvider>().payments;
+
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: const Text('Tableau de Bord Admin'),
+        title: const Text("Tableau de Bord Admin"),
       ),
-      body: GridView.count(
-        padding: const EdgeInsets.all(16),
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+      body: Column(
         children: [
-          _buildDashboardCard(
-            context,
-            Icons.people,
-            'Gestion des Contribuables',
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const TaxpayerManagementScreen(),
+          // --- HEADER ---
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: Color(0xFF141633),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(40),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _StatItem(
+                  icon: Icons.person,
+                  label: "assujettis",
+                  value: taxpayerCount.toString(),
                 ),
-              );
-            },
-          ),
-          _buildDashboardCard(
-            context,
-            Icons.receipt,
-            'Gestion des Taxes',
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const TaxManagementScreen(),
+                _StatItem(
+                  icon: Icons.list,
+                  label: "taxes",
+                  value: taxCount.toString(),
                 ),
-              );
-            },
-          ),
-          _buildDashboardCard(
-            context,
-            Icons.bar_chart,
-            'Rapports',
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const ReportsScreen(),
+                _StatItem(
+                  icon: Icons.payment,
+                  label: "paiements",
+                  value: payments.length.toString(),
                 ),
-              );
-            },
+              ],
+            ),
           ),
-          _buildDashboardCard(
-            context,
-            Icons.payment,
-            'Paiements',
-            () {
-              // Naviguer vers l'écran des paiements
-            },
+
+          const SizedBox(height: 20),
+
+          // --- LISTE DES PAIEMENTS ---
+          Expanded(
+            child: payments.isEmpty
+                ? const Center(
+                    child: Text("Aucun paiement enregistré"),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: payments.length,
+                    itemBuilder: (context, index) {
+                      final payment = payments[index];
+                      return _PaymentCard(
+                        name: payment.taxpayerId,
+                        tax: payment.taxId,
+                        amount: "${payment.amount} fc",
+                        date:
+                            "${payment.date.day}/${payment.date.month}", // format simple
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildDashboardCard(
-    BuildContext context,
-    IconData icon,
-    String title,
-    VoidCallback onTap,
-  ) {
-    return Card(
-      elevation: 4,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 48, color: Theme.of(context).primaryColor),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
+// --- Widget pour les stats du haut ---
+class _StatItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _StatItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 28),
+        const SizedBox(height: 5),
+        Text(label, style: const TextStyle(color: Colors.white)),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
+        ),
+      ],
+    );
+  }
+}
+
+// --- Widget pour chaque carte paiement ---
+class _PaymentCard extends StatelessWidget {
+  final String name;
+  final String tax;
+  final String amount;
+  final String date;
+
+  const _PaymentCard({
+    required this.name,
+    required this.tax,
+    required this.amount,
+    required this.date,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.deepPurple[100],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Text("nom"),
+                Text("taxe"),
+                Text("montant"),
+                Text("date"),
+              ],
+            ),
+            const Divider(color: Colors.white54),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    const Icon(Icons.person, color: Colors.black54),
+                    Text(name),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Icon(Icons.list, color: Colors.black54),
+                    Text(tax),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Icon(Icons.sentiment_satisfied, color: Colors.black54),
+                    Text(amount),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Icon(Icons.calendar_today,
+                        color: Colors.black54, size: 20),
+                    Text(date),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

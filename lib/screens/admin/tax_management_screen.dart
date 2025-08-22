@@ -40,7 +40,7 @@ class _TaxManagementScreenState extends State<TaxManagementScreen> {
           final tax = taxProvider.taxes[index];
           return ListTile(
             title: Text(tax.name),
-            subtitle: Text('${tax.amount} FCFA'),
+            subtitle: Text('${tax.amount} FC'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
