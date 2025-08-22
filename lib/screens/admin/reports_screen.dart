@@ -63,7 +63,7 @@ class ReportsScreen extends StatelessWidget {
                 
                 return DataRow(cells: [
                   DataCell(Text(tax.name)),
-                  DataCell(Text('${tax.amount} FCFA')),
+                  DataCell(Text('${tax.amount} FC')),
                   DataCell(Text('$payments')),
                 ]);
               }).toList(),
