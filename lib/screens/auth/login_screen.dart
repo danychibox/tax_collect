@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tax_collect/screens/admin/admin_dashboard.dart';
-import 'package:tax_collect/screens/taxpayer/dashboard_screen.dart';
-
+import 'package:tax_collect/screens/admin/dashboard.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -119,7 +117,13 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    onPressed: () {},
+                 onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => DashboardPage()),
+  );
+},
+
                     child: const Text(
                       "CONNEXION",
                       style: TextStyle(

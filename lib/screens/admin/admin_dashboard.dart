@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tax_collect/providers/tax_provider.dart';
 import 'package:tax_collect/providers/payment_provider.dart';
 import 'package:tax_collect/providers/taxpayer_provider.dart';
-
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
@@ -11,7 +10,7 @@ class AdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final taxpayerCount = context.watch<TaxpayerProvider>().taxpayers.length;
     final taxCount = context.watch<TaxProvider>().taxes.length;
-    final payments = context.watch<PaymentProvider>().payments;
+    final payments = context.watch<PaymentProvider>().paymentDetails;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -65,11 +64,11 @@ class AdminDashboard extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final payment = payments[index];
                       return _PaymentCard(
-                        name: payment.taxpayerId,
-                        tax: payment.taxId,
+                        name: payment.taxpayerName,
+                        tax: payment.taxName,
                         amount: "${payment.amount} fc",
                         date:
-                            "${payment.date.day}/${payment.date.month}", // format simple
+                            "${payment.date}", // format simple
                       );
                     },
                   ),
