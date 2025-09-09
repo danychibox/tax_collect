@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tax_collect/screens/admin/dashboard.dart';
+import 'package:tax_collect/screens/home_screen.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -94,7 +94,7 @@ class LoginPage extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                DashboardPage()),
+                                                HomeScreen()),
                                       );
                                     },
                                     child: const Text(
@@ -242,7 +242,7 @@ class LoginPage extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              DashboardPage()),
+                                              HomeScreen()),
                                     );
                                   },
                                   child: const Text(
