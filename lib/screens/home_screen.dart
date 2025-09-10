@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'scan_screen.dart';
-import 'data_screen.dart';
 import '../database/database_helper.dart';
 import '../models/tax_data.dart';
 import '../widgets/tax_card.dart';
@@ -27,27 +26,65 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Gestion Taxes'),
+        elevation: 0,
+        backgroundColor: Colors.blueAccent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
+        ),
+        title: const Text(
+          '📊 Gestion Taxes',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _loadData,
           ),
         ],
       ),
       body: taxDataList.isEmpty
-          ? Center(child: Text('Aucune donnée enregistrée'))
-          : ListView.builder(
-              itemCount: taxDataList.length,
-              itemBuilder: (context, index) => TaxCard(taxData: taxDataList[index]),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.inbox, size: 80, color: Colors.grey),
+                  SizedBox(height: 12),
+                  Text(
+                    'Aucune donnée enregistrée',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: taxDataList.length,
+                itemBuilder: (context, index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    child: TaxCard(taxData: taxDataList[index]),
+                  );
+                },
+              ),
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.blueAccent,
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ScanScreen()),
         ),
-        child: Icon(Icons.qr_code_scanner),
+        icon: const Icon(Icons.qr_code_scanner),
+        label: const Text("Scanner"),
       ),
     );
   }

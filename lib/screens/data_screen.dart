@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tax_collect/screens/success_screen.dart';
 import '../database/database_helper.dart';
 import '../models/tax_data.dart';
 
 class DataScreen extends StatefulWidget {
   final String qrCodeId;
 
-  DataScreen({required this.qrCodeId});
+  const DataScreen({Key? key, required this.qrCodeId}) : super(key: key);
 
   @override
   _DataScreenState createState() => _DataScreenState();
@@ -21,43 +22,99 @@ class _DataScreenState extends State<DataScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Enregistrement Taxe'),
+        elevation: 0,
+        backgroundColor: Colors.blueAccent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
+        ),
+        title: const Text(
+          "📝 Enregistrement Taxe",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
+              _buildTextField(
                 controller: _taxTypeController,
-                decoration: InputDecoration(labelText: 'Type de taxe'),
-                validator: (value) => value!.isEmpty ? 'Champ obligatoire' : null,
+                label: "Type de taxe",
+                icon: Icons.category,
               ),
-              TextFormField(
+              const SizedBox(height: 16),
+              _buildTextField(
                 controller: _payerNameController,
-                decoration: InputDecoration(labelText: 'Nom du payeur'),
-                validator: (value) => value!.isEmpty ? 'Champ obligatoire' : null,
+                label: "Nom du payeur",
+                icon: Icons.person,
               ),
-              TextFormField(
+              const SizedBox(height: 16),
+              _buildTextField(
                 controller: _shopDesignationController,
-                decoration: InputDecoration(labelText: 'Désignation boutique'),
-                validator: (value) => value!.isEmpty ? 'Champ obligatoire' : null,
+                label: "Désignation boutique",
+                icon: Icons.storefront,
               ),
-              TextFormField(
+              const SizedBox(height: 16),
+              _buildTextField(
                 controller: _amountController,
-                decoration: InputDecoration(labelText: 'Montant à payer'),
+                label: "Montant à payer",
+                icon: Icons.attach_money,
                 keyboardType: TextInputType.number,
-                validator: (value) => value!.isEmpty ? 'Champ obligatoire' : null,
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
+              const SizedBox(height: 30),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 onPressed: _saveData,
-                child: Text('Enregistrer'),
+                icon: const Icon(Icons.save, size: 22),
+                label: const Text(
+                  "Enregistrer",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: (value) => value!.isEmpty ? 'Champ obligatoire' : null,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
         ),
       ),
     );
@@ -76,13 +133,16 @@ class _DataScreenState extends State<DataScreen> {
 
       try {
         await DatabaseService().insertTaxData(taxData);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Données enregistrées avec succès!')),
-        );
+      Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (context) =>const SuccessScreen(),
+  ),
+);
         Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
+          SnackBar(content: Text('❌ Erreur: $e')),
         );
       }
     }
