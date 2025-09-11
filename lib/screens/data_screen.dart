@@ -4,9 +4,9 @@ import '../database/database_helper.dart';
 import '../models/tax_data.dart';
 
 class DataScreen extends StatefulWidget {
-  final String qrCodeId;
+  // final String qrCodeId;
 
-  const DataScreen({Key? key, required this.qrCodeId}) : super(key: key);
+  const DataScreen({Key? key}) : super(key: key);
 
   @override
   _DataScreenState createState() => _DataScreenState();
@@ -14,6 +14,7 @@ class DataScreen extends StatefulWidget {
 
 class _DataScreenState extends State<DataScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _codeController = TextEditingController();
   final TextEditingController _taxTypeController = TextEditingController();
   final TextEditingController _payerNameController = TextEditingController();
   final TextEditingController _shopDesignationController = TextEditingController();
@@ -26,6 +27,7 @@ class _DataScreenState extends State<DataScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
         ),
@@ -42,6 +44,12 @@ class _DataScreenState extends State<DataScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _buildTextField(
+                controller: _codeController,
+                label: "Numéro",
+                icon: Icons.code_sharp,
+              ),
+              const SizedBox(height: 16),
               _buildTextField(
                 controller: _taxTypeController,
                 label: "Type de taxe",
@@ -71,6 +79,7 @@ class _DataScreenState extends State<DataScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -123,7 +132,7 @@ class _DataScreenState extends State<DataScreen> {
   void _saveData() async {
     if (_formKey.currentState!.validate()) {
       final taxData = TaxData(
-        qrCodeId: widget.qrCodeId,
+        qrCodeId: _codeController.text,
         taxType: _taxTypeController.text,
         payerName: _payerNameController.text,
         shopDesignation: _shopDesignationController.text,

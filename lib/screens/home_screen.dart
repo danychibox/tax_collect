@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'scan_screen.dart';
+import 'package:tax_collect/screens/data_screen.dart';
+// import 'scan_screen.dart';
 import '../database/database_helper.dart';
 import '../models/tax_data.dart';
 import '../widgets/tax_card.dart';
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
         ),
@@ -79,12 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ScanScreen()),
+          MaterialPageRoute(builder: (context) => DataScreen()),
         ),
-        icon: const Icon(Icons.qr_code_scanner),
-        label: const Text("Scanner"),
+        icon: const Icon(Icons.add),
+        label: const Text("enregistrer"),
       ),
     );
   }
