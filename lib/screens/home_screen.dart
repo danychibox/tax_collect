@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tax_collect/screens/data_screen.dart';
-import '../database/database_helper.dart';
 import '../models/tax_data.dart';
 import '../widgets/tax_card.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -21,12 +22,31 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadData();
   }
 
+  // 🔄 Charger les données depuis l'API
   Future<void> _loadData() async {
-    final data = await DatabaseService().getAllTaxData();
-    setState(() {
-      taxDataList = data;
-      filteredList = data;
-    });
+    try {
+      final response = await http.get(
+        Uri.parse("http://api-tax.etatcivilnordkivu.cd/etablissement/perception/liste"),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final List data = jsonResponse["data"] ?? [];
+
+        final List<TaxData> loadedData = data
+            .map<TaxData>((item) => TaxData.fromApi(item))
+            .toList();
+
+        setState(() {
+          taxDataList = loadedData;
+          filteredList = loadedData;
+        });
+      } else {
+        print("Erreur API: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception lors de la récupération des données: $e");
+    }
   }
 
   void _filterData(String query) {
@@ -96,9 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 400),
               transitionBuilder: (child, animation) {
-                // Combinaison Fade + Slide
                 final slideAnimation = Tween<Offset>(
-                  begin: const Offset(0.1, 0), // léger décalage à droite
+                  begin: const Offset(0.1, 0),
                   end: Offset.zero,
                 ).animate(animation);
 

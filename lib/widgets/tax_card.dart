@@ -15,7 +15,7 @@ class TaxCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
@@ -32,7 +32,7 @@ class TaxCard extends StatelessWidget {
               radius: 28,
               backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
               child: Text(
-                taxData.payerName[0].toUpperCase(),
+                taxData.payerName.isNotEmpty ? taxData.payerName[0].toUpperCase() : "?",
                 style: TextStyle(
                   fontSize: 24,
                   color: theme.colorScheme.primary,
@@ -70,7 +70,7 @@ class TaxCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Date: ${taxData.paymentDate.toString().split(' ')[0]}',
+                    'Date: ${taxData.paymentDate.toLocal().toString().split(' ')[0]}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                     ),
