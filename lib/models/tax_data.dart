@@ -25,7 +25,7 @@ class TaxData {
 
     return TaxData(
       payerName: entete["nom_proprietaire"] ?? "Non défini",
-      shopDesignation: entete["nom_raison_sociel"] ?? "Non défini",
+      shopDesignation: serviceTaxateur["nom_raison_sociel"] ?? "Non défini",
       taxType: serviceTaxateur["acte_generateur_libelle"] ?? "Non défini",
       amount: serviceTaxateur["montant_chiffre"] ?? "0",
       paymentDate: DateTime.tryParse(serviceComptable["date_perception"] ?? "") ?? DateTime.now(),
