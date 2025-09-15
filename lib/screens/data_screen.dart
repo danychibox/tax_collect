@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tax_collect/screens/success_screen.dart';
 import '../database/database_helper.dart';
 import '../models/tax_data.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DataScreen extends StatefulWidget {
   // final String qrCodeId;
@@ -31,10 +32,18 @@ class _DataScreenState extends State<DataScreen> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
         ),
-        title: const Text(
-          "📝 Enregistrement Taxe",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+       
+title: Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    FaIcon(FontAwesomeIcons.chartBar, color: Colors.white),
+    SizedBox(width: 8),
+    Text(
+      "Paiement",
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+  ],
+),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
