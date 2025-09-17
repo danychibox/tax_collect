@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
 
 class EditDataScreen extends StatefulWidget {
-  final Map<String, dynamic> existingData; // Données à modifier
+  final Map<String, dynamic> existingData; // Données existantes
 
   const EditDataScreen({Key? key, required this.existingData}) : super(key: key);
 
@@ -17,7 +17,6 @@ class _EditDataScreenState extends State<EditDataScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
 
-  // === Controllers ===
   String? selectedEts;
   final TextEditingController communeCtrl = TextEditingController();
   final TextEditingController serviceCtrl = TextEditingController();
@@ -78,20 +77,18 @@ class _EditDataScreenState extends State<EditDataScreen> {
     modePaiementCtrl.text = data["mode_de_paiement"] ?? "";
   }
 
-  // Charger les établissements depuis l’API
   Future<List<Map<String, dynamic>>> fetchEtablissements(String filter) async {
     try {
       final response = await http.get(
-        Uri.parse("http://api-tax.etatcivilnordkivu.cd/etablissement"),
+        Uri.parse("http://api-tax.etatcivilnordkivu.cd/etablissementliste"),
       );
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         final List data = decoded["data"];
         return data.map<Map<String, dynamic>>((e) => e as Map<String, dynamic>).toList();
-      } else {
-        return [];
       }
+      return [];
     } catch (e) {
       print("Erreur API établissement: $e");
       return [];
@@ -105,19 +102,7 @@ class _EditDataScreenState extends State<EditDataScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            FaIcon(FontAwesomeIcons.edit, color: Colors.white),
-            SizedBox(width: 8),
-            Text("Modifier Taxe", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-          ],
-        ),
-        centerTitle: true,
+        title: const Text("Modifier Taxe"),
       ),
       body: Form(
         key: _formKey,
@@ -132,36 +117,28 @@ class _EditDataScreenState extends State<EditDataScreen> {
             }
           },
           onStepCancel: () {
-            if (_currentStep > 0) {
-              setState(() => _currentStep--);
-            }
+            if (_currentStep > 0) setState(() => _currentStep--);
           },
           steps: [
-            Step(title: const Text("Entête"), isActive: _currentStep >= 0, content: _buildStep1()),
-            Step(title: const Text("Service taxateur"), isActive: _currentStep >= 1, content: _buildStep2()),
-            Step(title: const Text("Service ordonnateur"), isActive: _currentStep >= 2, content: _buildStep3()),
-            Step(title: const Text("Service comptable"), isActive: _currentStep >= 3, content: _buildStep4()),
+            Step(title: const Text("Entête"), content: _buildStep1()),
+            Step(title: const Text("Service taxateur"), content: _buildStep2()),
+            Step(title: const Text("Service ordonnateur"), content: _buildStep3()),
+            Step(title: const Text("Service comptable"), content: _buildStep4()),
           ],
         ),
       ),
     );
   }
 
-  // Étapes Stepper
   Widget _buildStep1() => Column(
         children: [
           DropdownSearch<Map<String, dynamic>>(
-            items: (filter, InfiniteScrollProps) => fetchEtablissements(filter),
-            itemAsString: (Map<String, dynamic> u) => u["Designation"] ?? "Sans nom",
+            items: (filter, _) => fetchEtablissements(filter),
+            itemAsString: (u) => u["Designation"] ?? "Sans nom",
             selectedItem: {"id": selectedEts, "Designation": "Établissement existant"},
             onChanged: (value) {
-              setState(() {
-                selectedEts = value?["id"].toString();
-              });
+              setState(() => selectedEts = value?["id"].toString());
             },
-            decoratorProps: const DropDownDecoratorProps(
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
             validator: (value) => value == null ? "Sélectionnez un établissement" : null,
           ),
           _buildTextField(nompropriCtrl, "Propriétaire"),
@@ -195,130 +172,90 @@ class _EditDataScreenState extends State<EditDataScreen> {
   Widget _buildStep4() => Column(
         children: [
           _buildDateField(datePriseChargeCtrl, "Date prise en charge"),
-          _buildTextField(codeComptableCtrl, "Code désignation comptable"),
+          _buildTextField(codeComptableCtrl, "Code comptable"),
           _buildTextField(montantPercuChiffreCtrl, "Montant perçu en chiffres", type: TextInputType.number),
           _buildTextField(montantPercuLettreCtrl, "Montant perçu en lettres"),
           _buildTextField(modePaiementCtrl, "Mode de paiement"),
         ],
       );
 
-  // Champs
-  Widget _buildTextField(TextEditingController ctrl, String label,
-      {TextInputType type = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: ctrl,
-        keyboardType: type,
-        validator: (value) => value!.isEmpty ? "Champ obligatoire" : null,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.grey.shade300,
-          prefixIcon: const Icon(Icons.edit, color: Colors.orange),
-           border: OutlineInputBorder(
-           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-          )
+  Widget _buildTextField(TextEditingController ctrl, String label, {TextInputType type = TextInputType.text}) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextFormField(
+          controller: ctrl,
+          keyboardType: type,
+          validator: (value) => value!.isEmpty ? "Champ obligatoire" : null,
+          decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
         ),
-      ),
-    );
-  }
+      );
 
-  Widget _buildDateField(TextEditingController ctrl, String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: ctrl,
-        readOnly: true,
-        onTap: () async {
-          DateTime? pickedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.tryParse(ctrl.text) ?? DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-          );
-          if (pickedDate != null) {
-            ctrl.text = "${pickedDate.toLocal()}".split(' ')[0];
-          }
-        },
-        validator: (value) => value!.isEmpty ? "Champ obligatoire" : null,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: const Icon(Icons.calendar_today, color: Colors.orange),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  Widget _buildDateField(TextEditingController ctrl, String label) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextFormField(
+          controller: ctrl,
+          readOnly: true,
+          onTap: () async {
+            DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.tryParse(ctrl.text) ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) ctrl.text = picked.toIso8601String().split("T")[0];
+          },
+          validator: (value) => value!.isEmpty ? "Champ obligatoire" : null,
+          decoration: InputDecoration(labelText: label, border: OutlineInputBorder()),
         ),
-      ),
-    );
-  }
+      );
 
-  // Mise à jour des données
   void _updateData() async {
-    if (_formKey.currentState!.validate()) {
-    // 🔹 Bloc entête
-final entete = jsonEncode({
-  "commune": communeCtrl.text,
-  "service": serviceCtrl.text,
-  "numero": numeroCtrl.text,
-  "date": dateCtrl.text,
-  "nom_proprietaire": nompropriCtrl.text,
-});
+    if (!_formKey.currentState!.validate()) return;
 
-// 🔹 Bloc service taxateur
-final serviceTaxateur = jsonEncode({
-  "note_debit_numero": noteDebitCtrl.text,
-  "nom_raison_sociel": nomRaisonCtrl.text,
-  "acte_generateur_libelle": acteGenerateurCtrl.text,
-  "article_budgetaire": articleBudgetaireCtrl.text,
-  "montant_chiffre": montantChiffreCtrl.text,
-  "montant_en_lettre": montantLettreCtrl.text,
-});
+    final Map<String, dynamic> jsonData = {
+      "id": widget.existingData["id"],
+      "id_etablissement": selectedEts != null ? int.parse(selectedEts!) : null,
+      "entete": {
+        "commune": communeCtrl.text,
+        "service": serviceCtrl.text,
+        "numero": numeroCtrl.text,
+        "date": dateCtrl.text,
+        "nom_proprietaire": nompropriCtrl.text,
+      },
+      "service_taxateur": {
+        "note_debit_numero": noteDebitCtrl.text,
+        "nom_raison_sociel": nomRaisonCtrl.text,
+        "acte_generateur_libelle": acteGenerateurCtrl.text,
+        "article_budgetaire": articleBudgetaireCtrl.text,
+        "montant_chiffre": montantChiffreCtrl.text,
+        "montant_en_lettre": montantLettreCtrl.text,
+      },
+      "service_ordonateur": {
+        "date_reception": dateReceptionCtrl.text,
+        "avis_motive": avisMotiveCtrl.text,
+        "montant_vise_en_chiffre": montantViseChiffreCtrl.text,
+        "montant_vise_en_lettre": montantViseLettreCtrl.text,
+      },
+      "service_comptable": {
+        "date_prise_en_charge": datePriseChargeCtrl.text,
+        "code_designation_comptable": codeComptableCtrl.text,
+        "montant_percu_en_chiffre": montantPercuChiffreCtrl.text,
+        "montant_percu_en_lettre": montantPercuLettreCtrl.text,
+        "mode_de_paiement": modePaiementCtrl.text,
+      },
+    };
 
-// 🔹 Bloc service ordonateur
-final serviceOrdonateur = jsonEncode({
-  "date_reception": dateReceptionCtrl.text,
-  "avis_motive": avisMotiveCtrl.text,
-  "montant_vise_en_chiffre": montantViseChiffreCtrl.text,
-  "montant_vise_en_lettre": montantViseLettreCtrl.text,
-});
+    try {
+      final response = await http.put(
+        Uri.parse("http://api-tax.etatcivilnordkivu.cd/etablissement/perception/${widget.existingData["id"]}"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(jsonData),
+      );
 
-// 🔹 Bloc service comptable
-final serviceComptable = jsonEncode({
-  "date_prise_en_charge": datePriseChargeCtrl.text,
-  "code_designation_comptable": codeComptableCtrl.text,
-  "montant_percu_en_chiffre": montantPercuChiffreCtrl.text,
-  "montant_percu_en_lettre": montantPercuLettreCtrl.text,
-  "mode_de_paiement": modePaiementCtrl.text,
-});
-
-// 🔹 JSON final à envoyer
-final Map<String, dynamic> jsonData = {
-  "id": widget.existingData["id"], // tu avais un id dans ton code initial
-  "id_etablissement": selectedEts != null ? int.parse(selectedEts!) : null,
-  "entete": entete,
-  "service_taxateur": serviceTaxateur,
-  "service_ordonateur": serviceOrdonateur,
-  "service_comptable": serviceComptable,
-};
-
-
-      try {
-        final response = await http.put(
-          Uri.parse("http://api-tax.etatcivilnordkivu.cd/etablissement/perception/${widget.existingData["id"]}"),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(jsonData),
-        );
-
-        if (response.statusCode == 200) {
-          Navigator.pop(context, true); // Retourne avec succès
-        } else {
-          _showSnack("Erreur: ${response.statusCode}");
-        }
-      } catch (e) {
-        _showSnack("Impossible de modifier les données");
-      }
+      if (response.statusCode == 200) Navigator.pop(context, true);
+      else _showSnack("Erreur: ${response.statusCode}");
+    } catch (e) {
+      _showSnack("Impossible de modifier les données");
     }
   }
 
