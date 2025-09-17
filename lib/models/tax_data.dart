@@ -32,4 +32,17 @@ class TaxData {
       qrCodeId: json["id"].toString(),
     );
   }
+
+  // 🔹 Conversion en Map
+  Map<String, dynamic> toJson() {
+    return {
+      "payerName": payerName,
+      "shopDesignation": shopDesignation,
+      "taxType": taxType,
+      "amount": amount,
+      "paymentDate": paymentDate.toIso8601String(),
+      "qrCodeId": qrCodeId,
+    };
+  }
 }
+

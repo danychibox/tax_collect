@@ -210,11 +210,12 @@ class _DataScreenState extends State<DataScreen> {
         decoration: InputDecoration(
           labelText: label,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.grey.shade300,
           prefixIcon: const Icon(Icons.edit, color: Colors.blueAccent),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+          )
         ),
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tax_collect/screens/update_data.dart';
 import '../models/tax_data.dart';
+// import '../screens/update_data.dart'; // ✅ importe ta page de modification
 
 class TaxCard extends StatelessWidget {
   final TaxData taxData;
@@ -32,7 +34,9 @@ class TaxCard extends StatelessWidget {
               radius: 28,
               backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
               child: Text(
-                taxData.payerName.isNotEmpty ? taxData.payerName[0].toUpperCase() : "?",
+                taxData.payerName.isNotEmpty
+                    ? taxData.payerName[0].toUpperCase()
+                    : "?",
                 style: TextStyle(
                   fontSize: 24,
                   color: theme.colorScheme.primary,
@@ -41,6 +45,7 @@ class TaxCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
+
             // Infos principales
             Expanded(
               child: Column(
@@ -54,14 +59,10 @@ class TaxCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    'Boutique: ${taxData.shopDesignation}',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  Text(
-                    'Taxe: ${taxData.taxType}',
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  Text('Boutique: ${taxData.shopDesignation}',
+                      style: theme.textTheme.bodyMedium),
+                  Text('Taxe: ${taxData.taxType}',
+                      style: theme.textTheme.bodyMedium),
                   Text(
                     'Montant: ${taxData.amount} FC',
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -78,7 +79,9 @@ class TaxCard extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(width: 8),
+
             // QR code ID
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -93,6 +96,30 @@ class TaxCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+
+            const SizedBox(width: 8),
+
+            // ✏️ Bouton édition
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.orange),
+              tooltip: "Modifier",
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditDataScreen(
+                      existingData: taxData.toJson(), // 👈 conversion en Map
+                    ),
+                  ),
+                );
+
+                if (result == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Enregistrement modifié avec succès")),
+                  );
+                }
+              },
             ),
           ],
         ),
