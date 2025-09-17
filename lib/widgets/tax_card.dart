@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'package:flutter/material.dart';
 import 'package:tax_collect/screens/update_data.dart';
 import '../models/tax_data.dart';
@@ -81,27 +83,19 @@ class TaxCard extends StatelessWidget {
             ),
 
             const SizedBox(width: 8),
-
             // QR code ID
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                taxData.qrCodeId,
+            Column(
+              // spacing: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              children:[ 
+                const SizedBox(height: 3),
+              Text(
+                '${taxData.paymentDate.toLocal().toString().split(' ')[0]}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-
-            const SizedBox(width: 8),
-
-            // ✏️ Bouton édition
-            IconButton(
+               IconButton(
               icon: const Icon(Icons.edit, color: Colors.orange),
               tooltip: "Modifier",
               onPressed: () async {
@@ -121,6 +115,9 @@ class TaxCard extends StatelessWidget {
                 }
               },
             ),
+              ]
+            ),   // ✏️ Bouton édition
+           
           ],
         ),
       ),

@@ -235,7 +235,7 @@ Future<void> _login(BuildContext context) async {
     showErrorDialog(context, "Vérifiez votre connexion internet");
   } catch (e) {
     Navigator.of(context).pop();
-    showErrorDialog(context, "Erreur : pas d’accès internet");
+    showErrorDialog(context, "pas d’accès internet");
   } finally {
     setState(() => _isLoading = false);
   }
@@ -264,7 +264,7 @@ Future<void> _login(BuildContext context) async {
                   Image.asset("assets/user.jpg", height: 100,width: 100),
                   const SizedBox(height: 20),
                   const Text(
-                    "TAXE COLLECTE",
+                    "Fisc Control",
                     style: TextStyle(
                       color: Color(0xFF0D1B52),
                       fontSize: 22,
@@ -322,7 +322,7 @@ Future<void> _login(BuildContext context) async {
                                ),
                               onPressed: () {
                                  setState(() {
-                                 _obscurePassword = false;
+                                 _obscurePassword ? Icons.visibility: Icons.visibility_off;
                                 });
                                },)
                             ),
@@ -355,19 +355,70 @@ Future<void> _login(BuildContext context) async {
                         const SizedBox(height: 12),
                     TextButton(
   onPressed: () {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Mot de passe oublié"),
-        content: const Text("Consulter l'administrateur du système."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(), // ferme le dialog
-            child: const Text("OK"),
-                    ),
-                  ],
+showDialog(
+  context: context,
+  barrierDismissible: false, // l'utilisateur doit appuyer sur OK
+  builder: (context) => Dialog(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    elevation: 10,
+    backgroundColor: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icône
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 50),
+          ),
+          const SizedBox(height: 16),
+          // Titre
+          const Text(
+            "Mot de passe oublié",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          // Message
+          const Text(
+            "Consulter l'administrateur du système.",
+            style: TextStyle(fontSize: 16, color: Colors.black54),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          // Bouton OK
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: const Text(
+                "OK",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
             },
             child: const Text(
               "Mot de passe oublié ?",
