@@ -113,29 +113,36 @@ class _DataScreenState extends State<DataScreen> {
               isActive: _currentStep >= 0,
               content: Column(
                 children: [
-                  DropdownSearch<Map<String, dynamic>>(
-                    items: (filter, InfiniteScrollProps) => fetchEtablissements(filter),
-                    itemAsString: (Map<String, dynamic> u) => u["Designation"] ?? "Sans nom",
-                    dropdownBuilder: (context, selectedItem) {
-                      if (selectedItem == null) return const Text("Sélectionnez un établissement");
-                      return Text(
-                        "${selectedItem["Designation"]} - ${selectedItem["Proprietaire"] ?? ""}",
-                        style: const TextStyle(fontSize: 14),
-                      );
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        selectedEts = value?["id"].toString();
-                      });
-                    },
-                    decoratorProps: const DropDownDecoratorProps(
-                      decoration: InputDecoration(
-                        // labelText: "Etablissement",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    validator: (value) => value == null ? "Sélectionnez un établissement" : null,
-                  ),
+                DropdownSearch<Map<String, dynamic>>(
+  items: (filter, InfiniteScrollProps) => fetchEtablissements(filter),
+  itemAsString: (Map<String, dynamic> u) => u["Designation"] ?? "Sans nom",
+  dropdownBuilder: (context, selectedItem) {
+    if (selectedItem == null) return const Text("Sélectionnez un établissement");
+    return Text(
+      "${selectedItem["Designation"]} - ${selectedItem["Proprietaire"] ?? ""}",
+      style: const TextStyle(fontSize: 14),
+    );
+  },
+  onChanged: (value) {
+    setState(() {
+      selectedEts = value?["id"].toString();
+
+      // ⚡ Remplir automatiquement les champs de l’entête
+      nompropriCtrl.text = value?["Proprietaire"] ?? "";
+      communeCtrl.text = value?["Commune"] ?? "";
+      serviceCtrl.text = value?["Service"] ?? "";
+      numeroCtrl.text = value?["Numero"] ?? "";
+      dateCtrl.text = value?["Date"] ?? "";
+    });
+  },
+  decoratorProps: const DropDownDecoratorProps(
+    decoration: InputDecoration(
+      border: OutlineInputBorder(),
+    ),
+  ),
+  validator: (value) => value == null ? "Sélectionnez un établissement" : null,
+),
+
                   _buildTextField(nompropriCtrl, "Propriétaire"),
                   _buildTextField(communeCtrl, "Commune"),
                   _buildTextField(serviceCtrl, "Service"),
